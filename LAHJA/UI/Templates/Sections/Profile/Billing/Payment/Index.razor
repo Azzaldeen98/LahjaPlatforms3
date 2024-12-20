@@ -1,0 +1,57 @@
+﻿@page "/Payment"
+@page "/Payment/{planId}"
+
+@using LAHJA.Data.BlazarComponents.DesignServicesLahja
+@using LAHJA.Data.BlazarComponents.Plans.TemFeturePlans2.Them3.Model
+@using LAHJA.Data.UI.Components.Authentication
+@using LAHJA.Helpers
+@using LAHJA.Helpers.Services
+@using LAHJA.UI.Components.Billing.Shared
+
+@using LAHJA.UI.Templates.Sections.Profile.Billing.Payment.Components
+@using MudBlazor
+@using global::Shared.Constants.Router
+
+@inject AuthService AuthService
+
+<MudLayout>
+
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4" Style="padding:3%!important">
+
+        <MudDivider Class="my-4" />
+        <UpgradePlan auth="@auth" Params="@Params" />
+        <MudDivider Class="my-4" />
+
+        <BillingMethodsSection />
+
+        <MudDivider Class="my-4" />
+
+        <PaymentMethodsSection />
+
+    </MudContainer>
+</MudLayout>
+@code {
+
+
+    AuthComponent authComponent = new AuthComponent();
+    [Parameter] public PlanInfo? Params { get; set; } = null;
+    [Parameter] public AuthComponent? auth { get; set; }
+    [Parameter] public string planId { get; set; }
+
+    private List<PlanInfo> planInfos;
+
+    protected override async void OnInitialized()
+    {
+
+
+        auth = new AuthComponent {
+            IsAuth = await AuthService.isAuth(),
+            IsMyself = await AuthService.isAuth(),
+                PageRouterName = RouterPage.LOGIN
+        };
+        Params = DataManager.Sherch(planId);
+        StateHasChanged();
+
+
+    }
+}

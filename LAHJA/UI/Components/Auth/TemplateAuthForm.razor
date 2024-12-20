@@ -1,0 +1,147 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using LAHJA.Data.UI.Components.Base
+@using LAHJA.UI.Components.Auth
+
+@using Microsoft.Extensions.Options
+@using global::Shared.Wrapper
+
+
+@inherits CardAuth<DataBuildAuthBase>
+@inject IJSRuntime JSRuntime
+
+
+<ReCaptchaComponent />
+
+
+
+
+<MudForm id="Auth-Demo-form" @ref="form" onsubmit="onSubmitReCAPTCHA(event)" @bind-IsValid="@success" @bind-Errors="@errors">
+
+
+   
+
+    @if (!IsLogin)
+    {
+
+        <MudTextField T="string" Disabled="false" Required="true" Label="PhoneNumber" RequiredError="Phone Number is required!" @bind-Value="@phoneNumber" />
+    }
+
+    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
+    Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" @bind-Value="@email" />
+    <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+    InputType="InputType.Password"
+    Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+    RequiredError="Password is required!" @bind-Value="@password" />
+
+    @if (!IsLogin)
+    {
+        <MudTextField T="string"
+        Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+        Validation="@(new Func<string, string>(PasswordMatch))" />
+    }
+
+    <div class="row mb-3">
+        <div class="offset-sm-4 col-sm-8">
+            <div id="html_element"></div>
+        </div>
+    </div>
+    <br />
+    <div class="d-flex align-center justify-space-between">
+        <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree!" />
+        <MudButton id="submitButton" Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled="@(!success)" Class="ml-auto">@(IsLogin ? "Login" : "Register")</MudButton>
+
+    </div>
+
+
+
+
+    @if (IsLogin)
+    {
+        <div class="d-flex align-center justify-space-between">
+
+            <MudButton OnClick="onClickForgetPassword" Color="Color.Primary">Forgot Password?</MudButton>
+        </div>
+    }
+    <div class="d-flex align-center justify-space-between">
+
+        <MudButton OnClick="showConfirmationEmail" Color="Color.Primary">Confirm Email</MudButton>
+        <MudButton OnClick="showResetPassword" Color="Color.Primary">Reset Password</MudButton>
+    </div>
+
+    @if (errors != null && errors.Count() > 0)
+    {
+        <MudAlert Severity="Severity.Error" Class="mt-3">
+            <ul>
+                @foreach (var error in errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        </MudAlert>
+    }
+
+
+</MudForm>
+
+
+<ForgetPasswordForm IsDisplay="visibleForgetPassword" OnSubmited=OnSubmitedForgetPassword />
+
+@code{
+
+
+    // bool success { get; set; }
+    // bool visibleForgetPassword { get; set; }
+    // string[] errors { get; set; }
+
+    // private CardAuth<DataBuildAuthBase> cardAuth = new CardAuth<DataBuildAuthBase>();
+
+    async Task Submit(){
+        DataBuildAuthBase data;
+
+        var result = await JSRuntime.InvokeAsync<string>("onSubmitReCAPTCHA");
+        if (result == null)
+        {
+
+            errors = new string[] { MapperMessages.Map(
+                    global::Shared.Constants.ErrorMessages.CHECK_FROM_RECAPTCHA_EN,
+                    global::Shared.Constants.ErrorMessages.CHECK_FROM_RECAPTCHA_EN) };
+
+        }
+        else{
+
+
+            if (IsLogin)
+            {
+                data=new DataBuildAuthBase()
+                {
+                        Email = email,
+                        Password = password
+
+                };
+            }
+            else
+            {
+
+                data = new DataBuildAuthBase()
+                {
+                        Email = email,
+                        Password = password,
+                        ConfirmPassword = repeatPassword,
+                        PhoneNumber = phoneNumber
+
+                };
+            }
+            data.IsLogin = IsLogin;
+
+                if (OnSubmit.HasDelegate)
+                {
+                     await OnSubmit.InvokeAsync(data);
+                }
+        }
+;
+        StateHasChanged();
+
+}
+
+}

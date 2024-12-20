@@ -1,0 +1,55 @@
+﻿
+
+@using LAHJA.Data.BlazarComponents.DesignServicesLahja
+@using LAHJA.Data.BlazarComponents.Plans.TemFeturePlans2.Them3.Model
+@using LAHJA.Data.UI.Components.Authentication
+@using LAHJA.Helpers
+@using LAHJA.Helpers.Services
+@using LAHJA.UI.Components.Billing.Shared
+@inject ISnackbar Snackbar
+ 
+@using MudBlazor
+
+@inject AuthService AuthService
+<MudLayout>
+
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-4" Style="padding:3%!important">
+
+
+        <MudDivider Class="my-4" />
+        <UpgradePlan  Params="@Params" />
+        <MudDivider Class="my-4" />
+
+         <BillingMethodsSection   /> 
+        <MudDivider Class="my-4" />
+        <PaymentMethodsSection/>
+        <MudButton OnClick="Payment"> ddddddddddd </MudButton>
+    </MudContainer>
+  
+</MudLayout>
+
+@code 
+
+{
+
+
+
+
+
+    AuthComponent authComponent = new AuthComponent();
+    [Parameter] public SubscriptionPlanInfo? Params { get; set; } = null;
+    [Parameter] public AuthComponent? auth { get; set; }
+    [Parameter] public string planId { get; set; }
+
+
+
+
+    public void Payment()
+    {
+        Snackbar.Add(Params.TotalPrice.ToString(), Severity.Error);
+    }
+
+    private List<SubscriptionPlanInfo> planInfos;
+
+ 
+}

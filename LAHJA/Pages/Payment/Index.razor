@@ -1,0 +1,61 @@
+﻿@page "/Paymentt"
+@page "/Paymentt/{planId}"
+
+@using LAHJA.Data.BlazarComponents.Plans.TemFeturePlans2.Them3.Model
+@using LAHJA.Data.UI.Components.Category
+@using LAHJA.Data.UI.Templates.Payment
+@using LAHJA.UI.Components.Payment
+@using MudBlazor
+@using global::Shared.Constants.Router
+@inject LAHJA.Data.UI.Templates.Plans.TemplatePlans Template
+@inject LAHJA.Data.UI.Templates.Payment.TemplatePayment Template2
+
+@inject NavigationManager Navigation
+
+
+@if (data != null)
+{
+    <PaymentComponts Params="data" />
+}
+
+@code{
+
+
+    private SubscriptionPlanInfo data;
+    private List<string> errors; 
+
+
+    [Parameter] public string planId { get; set; }
+
+    protected override async void OnInitialized()
+    {
+
+
+        if (planId != null)
+        {
+            // var res = await Template2.getPaymentCheckoutUrlPage(new DataBuildPaymentBase { PlanId = "price_1Pst3IKMQ7LabgRTZV9VgPex" });
+            var res = await Template.OnSubmitSubscriptionPlan(new DataBuildPlansBase { PlanId = planId });
+            if (res.Succeeded)
+            {
+                data = res.Data;
+
+                // Navigation.NavigateTo(res.Data.url ?? RouterPage.HOME);
+                StateHasChanged();
+            }
+            else
+            {
+                errors = res.Messages;
+            }
+        }
+
+
+
+      // StateHasChanged();
+
+
+
+
+
+    }
+
+}

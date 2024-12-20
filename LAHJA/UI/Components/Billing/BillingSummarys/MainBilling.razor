@@ -1,0 +1,45 @@
+﻿@page "/BillingSummaryt"
+@using LAHJA.Data.BlazarComponents.Authentication
+@using LAHJA.Data.BlazarComponents.DesignServicesLahja
+@using LAHJA.Data.BlazarComponents.Plans.TemFeturePlans2.Them3.Model
+@using LAHJA.UI.Components.Billing.BillingSummarys.Components
+@using LAHJA.UI.Components.Billing.Shared
+@using LAHJA.UI.Templates.Sections.Profile
+ 
+
+
+<MudLayout>
+
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-4">
+         <HeaderComponents/>
+        <MudDivider Class="my-4" />
+        <PlansCompire IsAuth="true" Params="planInfos" />
+        <MudDivider Class="my-4" />
+        <SubscripPlan Params="planInfo"/>
+        <MudDivider Class="my-4" />
+        <PieChart/>
+        <MudDivider Class="my-4" />
+     
+    </MudContainer>
+</MudLayout>
+
+@code
+{
+
+    [Parameter] public SubscriptionPlanInfo? Param { get; set; }
+
+    [Parameter]
+
+    public List<SubscriptionPlanInfo> Params { get; set; }
+
+
+
+    private List<SubscriptionPlanInfo> planInfos;
+    private SubscriptionPlanInfo planInfo;
+    protected override async void OnInitialized()
+    {
+        // planInfos = DataManager.GetAllPlanInfos();
+        // planInfo = planInfos[0];
+        StateHasChanged();
+    }
+}

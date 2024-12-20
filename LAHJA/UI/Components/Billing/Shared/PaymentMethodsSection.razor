@@ -1,0 +1,118 @@
+﻿@using LAHJA.Data.UI.Components.Payment.CreditCard
+@using LAHJA.Data.UI.Components.Payment.CreditCards
+@using MudBlazor
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+
+
+
+@if (creditCards != null && creditCards.Count > 0)
+    {
+    <MudExpansionPanels>
+        <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                        <MudList Class="mt-4">
+
+
+                            @foreach (var card in creditCards)
+                            {
+                                <MudListItem Class="custom-border">
+                                    <MudRadio T="bool" @bind-Checked="card.IsSelected"  />
+                                    <MudIcon Class="mr-2" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Outlined.AddCard"> </MudIcon>
+                                    <MudText Typo="Typo.body1">@card.CardNumber</MudText>
+                                    <MudText Typo="Typo.caption" Class="ml-2">Expiry @card.ExpirationDate</MudText>
+                                <MudText Typo="Typo.caption" Class="ml-2">Expiry @card.CardType</MudText>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Class="ml-auto">Update</MudButton>
+                                </MudListItem>
+                            }
+
+                        </MudList>
+                    <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                <LAHJA.UI.Components.Payment.CreditCard.FormCard OnClickSave="AddCard" />
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+
+    }
+
+    else
+    {
+
+
+
+    <MudExpansionPanels>
+        <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">The reactor temperature exceeds the optimal range
+
+                     </MudAlert>
+                    <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
+                </div>
+            </TitleContent>
+            <ChildContent>
+
+                <LAHJA.UI.Components.Payment.CreditCard.FormCard OnClickSave="AddCard" />
+
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+    }
+ 
+ 
+
+@code
+{
+
+
+    [Parameter] public EventCallback<CardDetails> OnSelect { get; set; }
+
+    private List<CardDetails> creditCards = new List<CardDetails>
+
+    {
+
+    };
+    bool open;
+    private async  void AddCard(CardDetails newCard)
+
+    {
+
+        try
+        {
+            creditCards.Add(newCard);
+            if (OnSelect.HasDelegate)
+            {
+
+                await OnSelect.InvokeAsync(newCard);
+            }
+        }
+
+        catch(Exception ex)
+        {
+            
+        }
+
+      
+
+
+
+     
+
+        
+
+
+    
+
+    }
+ 
+
+
+ 
+
+}

@@ -1,0 +1,167 @@
+﻿@using LAHJA.Data.UI.Components.Payment.BillingContact
+ 
+
+
+
+
+<MudText Typo="Typo.h6" Class="mb-4"> Payment information</MudText>
+@if (@billingContact == null)
+{
+
+
+
+
+ 
+    <div class="mx-auto">
+
+        <MudExpansionPanels>
+            <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
+                <TitleContent>
+                    <div class="d-flex">
+
+                        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                            The reactor temperature exceeds the optimal range
+                                + Billing  Method
+                        </MudAlert>
+                        <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+
+                    <LAHJA.UI.Components.Payment.CreditCard.FormBilling OnClickSave= "@OnclickCreate" />
+
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </div>
+
+
+
+
+
+
+
+
+   
+
+}
+else
+
+{
+      
+           <MudExpansionPanels>
+            <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
+                <TitleContent>
+                    <div class="d-flex">
+                    <MudPaper Class="p-4 mb-4" Elevation="1">
+                        <MudText>Billing information</MudText>
+                        <MudText>@billingContact.FullName</MudText>
+                        <MudText>@billingContact.Country</MudText>
+                        <MudText>@billingContact.City</MudText>
+                        <MudText>@billingContact.MobilePhoneNumber</MudText>
+                        <div class="d-flex justify-end mt-2">
+                     
+                           
+                            
+                            <MudButton Variant="Variant.Outlined" Color="Color.Error">Remove</MudButton>
+                        </div>
+                    </MudPaper>
+                        <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Edit)" class="ml-auto"></MudIcon>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+
+                    <LAHJA.UI.Components.Payment.CreditCard.FormBilling OnClickSave="@OnclickCreate"  />
+
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+   
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+}
+
+
+@code
+
+{
+    bool open;
+
+
+    private bool flag = true;
+    private BillingContact billingContact = null;
+
+
+
+    [Parameter] public EventCallback<BillingContact> OnSelect { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            BillingContactt(billingContact);
+        }
+        catch(Exception ex)
+        {
+            
+        }
+
+    }
+    private void Tabb()
+    {
+        flag = false;
+        StateHasChanged();
+    }
+
+    private async void  Cancle(bool _flag)
+    {
+        flag = true;
+        StateHasChanged();
+
+
+    }
+    private async void BillingContactt(BillingContact billingContact)
+    {
+        try
+        {
+            if (OnSelect.HasDelegate)
+            {
+
+                await OnSelect.InvokeAsync(billingContact);
+            }
+        }
+        catch
+        {
+
+        }
+
+    }
+
+    private async  void  OnclickCreate(BillingContact _billingContact)
+    {
+        try
+        {
+            billingContact = _billingContact;
+            BillingContactt(billingContact);
+
+            StateHasChanged();
+
+        }
+        catch(Exception ex)
+        {
+            
+        }
+    }
+
+}
